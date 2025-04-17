@@ -4,7 +4,6 @@
 /build
 /database
 /prisma/generated
-/redis_data
 
 # Logs
 logs
