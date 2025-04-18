@@ -7,7 +7,7 @@ yarn install
 
 ## Start project
 ```bash
-yarn db:push
+yarn prisma generate
 
 yarn start:dev 
 ```
