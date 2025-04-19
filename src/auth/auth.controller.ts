@@ -1,8 +1,9 @@
-import { UserDto } from './../user/dto/user.dto';
+import { SignupUserDto } from '../user/dto/signupUser.dto';
 import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
+import { SigninUserDto } from '../user/dto/signinUser.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -12,22 +13,22 @@ export class AuthController {
   @Post('sign-up')
   @HttpCode(HttpStatus.CREATED)
   @ApiBody({
-    type: UserDto,
-    description: 'Объект полей регистрации пользователя'
+    type: SignupUserDto,
+    description: 'Объект полей регистрации. Username необязательное поле для заполнения'
   })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'Регистрация' })
-  async singUp(@Req() req: Request, @Body() dto: UserDto) {
+  @ApiResponse({ status: HttpStatus.CREATED, description: 'Создает сессию после успешной регистраци, устанавливаются куки' })
+  async singUp(@Req() req: Request, @Body() dto: SignupUserDto) {
     return this.authService.singUp(req, dto)
   }
 
   @Post('sign-in')
   @HttpCode(HttpStatus.OK)
   @ApiBody({
-    type: UserDto,
-    description: 'Объект полей регистрации пользователя'
+    type: SigninUserDto,
+    description: 'Объект полей авторизации. Вход можно осуществить по email, либо по username'
   })
-  @ApiResponse({ status: HttpStatus.OK, description: 'Вход в аккаунт' })
-  async singIn(@Req() req: Request, @Body() dto: UserDto) {
+  @ApiResponse({ status: HttpStatus.OK, description: 'Создает сессию после успешного входа, устанавливаются куки' })
+  async singIn(@Req() req: Request, @Body() dto: SigninUserDto) {
     return this.authService.singIn(req, dto);
   }
 

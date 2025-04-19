@@ -11,8 +11,11 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
 
-  username String @unique
+  email    String  @unique
+  username String? @unique
   password String
+
+  authMethod AuthMethod @default(CREDENTIAL) @map("auth_method")
 
   role UserRole @default(REGULAR)
 
@@ -25,4 +28,9 @@ model User {
 enum UserRole {
   REGULAR
   ADMIN
+}
+
+enum AuthMethod {
+  CREDENTIAL
+  GOOGLE
 }

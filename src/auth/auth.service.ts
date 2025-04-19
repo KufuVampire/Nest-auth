@@ -1,20 +1,21 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import { UserDto } from '../user/dto/user.dto';
+import { SignupUserDto } from '../user/dto/signupUser.dto';
 import { Request, Response } from 'express';
 import { User } from '@/prisma/generated';
 import { verify } from 'argon2';
 import { ConfigService } from '@nestjs/config';
+import { SigninUserDto } from '../user/dto/signinUser.dto';
 
 @Injectable()
 export class AuthService {
 	constructor(private readonly userService: UserService, private readonly configService: ConfigService) { }
 
-	async singUp(req: Request, dto: UserDto) {
-		const isExist = await this.userService.findByUsername(dto.username);
+	async singUp(req: Request, dto: SignupUserDto) {
+		const isExist = await this.userService.findByEmail(dto.email);
 
 		if (isExist) {
-			throw new ConflictException('Ошибка регистрации. Пользователь с таким именем пользователя уже существует. Пожалуйста, используйте другое имя пользователя или войдите в уже существующий аккаунт.');
+			throw new ConflictException('Ошибка регистрации. Пользователь с такой почтой уже существует. Пожалуйста, используйте другую почту или войдите в уже существующий аккаунт.');
 		}
 
 		const newUser = await this.userService.create(dto);
@@ -22,8 +23,10 @@ export class AuthService {
 		return await this.saveSession(req, newUser);
 	}
 
-	async singIn(req: Request, dto: UserDto) {
-		const user = await this.userService.findByUsername(dto.username);
+	async singIn(req: Request, dto: SigninUserDto) {
+		const user = dto.email ?
+			await this.userService.findByEmail(dto.email) :
+			await this.userService.findByUsername(dto.username);
 
 		if (!user) {
 			throw new NotFoundException('Пользователь не найден. Пожалуйста, проверьте входные данные.')
@@ -31,7 +34,7 @@ export class AuthService {
 
 		const isValidPassword = await verify(user.password, dto.password);
 		if (!isValidPassword) {
-			throw new UnauthorizedException('Неправильное имя пользователя или пароль.')
+			throw new UnauthorizedException('Ошибка входа, проверьте входные данные.')
 		}
 
 		return await this.saveSession(req, user);

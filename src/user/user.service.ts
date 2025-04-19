@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { hash } from 'argon2';
-import { UserDto } from './dto/user.dto';
+import { SignupUserDto } from './dto/signupUser.dto';
 
 @Injectable()
 export class UserService {
@@ -19,19 +19,30 @@ export class UserService {
 		return user;
 	}
 
+	async findByEmail(email: string) {
+		const user = await this.prisma.user.findUnique({
+			where: {
+				email
+			}
+		})
+
+		return user;
+	}
+
 	async findByUsername(username: string) {
 		const user = await this.prisma.user.findUnique({
 			where: {
 				username
 			}
-		});
+		})
 
-		return user
+		return user;
 	}
 
-	async create({ username, password }: UserDto) {
+	async create({ email, username, password }: SignupUserDto) {
 		const user = await this.prisma.user.create({
 			data: {
+				email,
 				username,
 				password: await hash(password)
 			}

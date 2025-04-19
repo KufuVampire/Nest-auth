@@ -21,7 +21,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
 
-  app.use(cookieParser(config.getOrThrow<string>('SESSION_SECRET')));
+  app.use(cookieParser(config.getOrThrow<string>('COOKIES_SECRET')));
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
