@@ -20,7 +20,7 @@ export class AuthService {
 
 		const newUser = await this.userService.create(dto);
 
-		return await this.saveSession(req, newUser);
+		await this.saveSession(req, newUser);
 	}
 
 	async singIn(req: Request, dto: SigninUserDto) {
@@ -37,7 +37,7 @@ export class AuthService {
 			throw new UnauthorizedException('Ошибка входа, проверьте входные данные.')
 		}
 
-		return await this.saveSession(req, user);
+		await this.saveSession(req, user);
 	}
 
 	async singOut(req: Request, res: Response): Promise<void> {
