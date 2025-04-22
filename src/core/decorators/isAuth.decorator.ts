@@ -1,12 +1,12 @@
 import { UserRole } from "@/prisma/generated";
 import { applyDecorators, UseGuards } from "@nestjs/common";
-import { RoleGuard } from "../guards/role.guard";
-import { Role } from "./role.decorator";
+import { RolesGuard } from "../guards/roles.guard";
+import { Roles } from "./roles.decorator";
 import { AuthGuard } from "../guards/auth.guard";
 
-export function IsAuth(role?: UserRole) {
-	if (role) {
-		return applyDecorators(Role(role), UseGuards(AuthGuard, RoleGuard))
+export function IsAuth(...roles: UserRole[]) {
+	if ( roles.length > 0) {
+		return applyDecorators(Roles(...roles), UseGuards(AuthGuard, RolesGuard))
 	}
 
 	return applyDecorators(UseGuards(AuthGuard));
