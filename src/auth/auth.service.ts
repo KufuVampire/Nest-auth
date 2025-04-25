@@ -1,11 +1,10 @@
 import { ConflictException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import { SignupUserDto } from '../user/dto/signupUser.dto';
 import { Request, Response } from 'express';
 import { User } from '@/prisma/generated';
 import { verify } from 'argon2';
 import { ConfigService } from '@nestjs/config';
-import { SigninUserDto } from '../user/dto/signinUser.dto';
+import { SigninUserDto, SignupUserDto } from '../user/dto/user.dto';
 
 @Injectable()
 export class AuthService {
@@ -56,7 +55,7 @@ export class AuthService {
 				new InternalServerErrorException('Не удалось сохранить сессию')
 			}
 		})
-
+		
 		return user;
 	}
 }
